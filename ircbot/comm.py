@@ -4,7 +4,7 @@ Recommended to use the bot.Bot class to create a bot instead of this.
 HOWEVER, this is recommended to use this to add commands to your bot.
 
 Example of use:
-	SERVER, PORT = "chat.freenode.net", 6665
+	SERVER, PORT = "chat.freenode.net", 6697
 	
 	# connect
 	comm.conn((SERVER, PORT))
@@ -35,9 +35,9 @@ import ircsocket as sock
 #         Basic Commands          #
 ###################################
 
-def conn((server, port)):
-	'''Connect to irc server at port, default is chat.freenode.net:6665'''
-	sock.conn((server, port))
+def conn((server, port), sslOn=True):
+	'''Connect to irc server at port.  SSL is on by default.'''
+	sock.conn((server, port), sslOn)
 
 def login(nickname, username, password, realname, hostname, servername):
 	'''Send login data'''

@@ -2,6 +2,7 @@
 This handles socket communcation for irccomm
 '''
 import socket
+import ssl
 import threading
 
 ######################################################################
@@ -40,11 +41,14 @@ def getNext():
 
 def send_data(command, private=0):
 	'''Simple function to send data through the socket'''
-	print ">  Sending:  " + command + "\n"
+	print "<",command,'\n\n'
 	IRC.send(command + '\n')
 
-def conn((server, port)):
-	'''Open a connection with the server'''
+def conn((server, port), sslOn=True):
+	'''Open a connection with the server.  SSL is on by default.'''
+	if sslOn:
+		global IRC
+		IRC = ssl.wrap_socket(IRC)
 	# connect to server
 	IRC.connect((server, port))
 	

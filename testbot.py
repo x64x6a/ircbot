@@ -1,8 +1,7 @@
 '''
 	Example of implementation of ircbot library
 '''
-import ircbot.bot as b
-import time
+import ircbot.bot as bot
 
 # func(self, sender, channel, cmd, params) # call function
 def slap(self, sender, channel, cmd, params):
@@ -24,21 +23,22 @@ def deop(self, sender, channel, cmd, params):
 		self.comm.messageUser(message, self.chanserv)
 
 def main():
-	# *** EDIT PARAMETERS ***
-	bot = b.Bot('chat.freenode.net', 6665, 'IamBot10110', 'IamBot10110', 'PASSWORD1234', 'Name', 'Host', 'chat.freenode.net')
+	# *** EDIT PARAMETERS ***    # SSL is on by default... make sure your using an ssl enabled port
+	mybot = bot.Bot('chat.freenode.net', 6697, 'IamBot10110', 'IamBot10110', 'PASSWORD1234', 'Name', 'Host', 'chat.freenode.net')
 	
 	# add commands
-	bot.add_cmd('slap',slap)
-	bot.add_cmd('op', op)
+	mybot.add_cmd('slap',slap)
+	mybot.add_cmd('op', op)
+	mybot.add_cmd('deop', deop)
 	
 	# connect
-	bot.conn()
+	mybot.conn()
 	
 	# join channel 
-	bot.join('#unonullify')
+	mybot.join('#channel')
 	
 	# speak in channel
-	bot.comm.messageChannel('This is a Test!','#unonullify')
+	mybot.comm.messageChannel('This is a Test!','#channel')
 
 if __name__ == "__main__":
 	main()

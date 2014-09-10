@@ -23,7 +23,7 @@ Example:
 		message = 'slaps ' + (params.split(' ')[0] or sender) + " around a bit with a large trout"
 		self.comm.perform_action(message, channel)
 	
-	bot = ircbot.bot('chat.freenode.net', 6665, 'Nick', 'Nick', 'password1234', 'Nicolas', 'Host', 'chat.freenode.net')
+	bot = ircbot.bot('chat.freenode.net', 6697, 'Nick', 'Nick', 'password1234', 'Nicolas', 'Host', 'chat.freenode.net')
 	bot.add_cmd('slap', slap)
 	bot.conn()
 	bot.join('#channel')
@@ -35,9 +35,9 @@ import re
 import time
 
 class Bot():
-	def __init__(self, server, port, nickname, username, password, realname, hostname, servername, logs=False, cmdIdentifier='!'):
-		'''initialize:  server, port, nickname, username, password, realname, hostname, servername
-		Password can be None.  Set the logs flag to true to save logs.'''
+	def __init__(self, server, port, nickname, username, password, realname, hostname, servername, logs=False, cmdIdentifier='!', sslOn=True):
+		'''Initialize:  server, port, nickname, username, password, realname, hostname, servername
+Password can be None.  Set the logs flag to true to save logs.  SSL is on by default.'''
 		self.server = server
 		self.port = port
 		self.nickname = nickname
@@ -46,6 +46,7 @@ class Bot():
 		self.realname = realname
 		self.hostname = hostname
 		self.servername = servername
+		self.sslOn = sslOn
 		
 		self.cmdIdentifier = cmdIdentifier  # default identifier is '!'
 		self.commands = {}
@@ -67,7 +68,7 @@ class Bot():
 	
 	def conn(self):
 		'''Connect to IRC server, logs in, and starts the message handler'''
-		self.comm.conn((self.server, self.port))
+		self.comm.conn((self.server, self.port), self.sslOn)
 		self.comm.login(self.nickname, self.username, self.password, self.realname, self.hostname, self.servername)
 		
 		# start handler
@@ -113,8 +114,7 @@ class Bot():
 	
 	def handleAccessList(self, messageList):
 		''' Attempts to handle notice's from chanserve contain the users' flags.  May fail.
-		If it doesn't... it will add the access list to self.flag_dict[channel]'''
-		print "Updating Flags....\n\n"
+If it doesn't... it will add the access list to self.flag_dict[channel]'''
 		messages = '\n'.join(messageList)
 		pattern = r"\d+\s+[A-Za-z0-9_]+\s+\+[A-Za-z]+"
 		found = re.findall(pattern, messages)
@@ -137,7 +137,7 @@ class Bot():
 					flag_dict[flag] = [user]
 				else:
 					flag_dict[flag].append(user)
-		print flag_dict
+		
 		# last appended message should contain the channel
 		n = messageList[-1].find('\x02#')
 		if n == -1: return
@@ -167,7 +167,7 @@ class Bot():
 			# get next input
 			buffer = self.comm.recv()
 			if buffer:
-				print buffer
+				print ">"+buffer
 			else:
 				continue
 			
@@ -213,7 +213,6 @@ class Bot():
 				if messageList[0][1:].lower() == 'entry':
 					cs_noticeList = []
 				cs_noticeList.append(message)
-				print "HEREREREE:>>>  ",messageList, "\n<<<<<<<<<<<<<\n\n"
 				# last appended message should contain the channel
 				if messageList[0][1:].lower() == 'end':
 					t = threading.Thread(target=self.handleAccessList, args=(cs_noticeList,))
