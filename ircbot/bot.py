@@ -47,8 +47,8 @@ Password can be None.  Set the logs flag to true to save logs.  SSL is on by def
 		self.hostname = hostname
 		self.servername = servername
 		self.sslOn = sslOn
-		
 		self.cmdIdentifier = cmdIdentifier  # default identifier is '!'
+		
 		self.commands = {}
 		import comm
 		self.comm = comm #__import__('comm')
@@ -60,6 +60,7 @@ Password can be None.  Set the logs flag to true to save logs.  SSL is on by def
 		self.logfile = self.log_dir + '/ircbotlog.txt'
 		self.canJoin = False
 		self.lastUpdate = 0
+		self.channels_updating = []   # list of channels that are updating access lists
 		
 		# if logs is turn on, confirm directory exists
 		if self.logs and not os.path.exists(self.log_dir):
@@ -100,7 +101,7 @@ Password can be None.  Set the logs flag to true to save logs.  SSL is on by def
 		if cmd not in self.commands:
 			return
 		
-		sender = bufflist[0][:bufflist[0].find('!')][1:]  # get sender
+		sender = bufflist[0][:bufflist[0].find(self.cmdIdentifier)][1:]  # get sender
 		channel = bufflist[2]  # get channel
 		
 		# get params if there are any
@@ -177,8 +178,6 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 			
 			if f:  f.write(buffer + '\n')
 			
-			
-			
 			# check if ping, to respond with pong
 			if buffer[:5] == 'PING ':
 				sender = buffer.split(' ')[1]
@@ -195,7 +194,9 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 				if channel in self.channel_list:
 					continue
 				self.channel_list.append(channel)
-				self.updateAccess(channel)
+				if channel not in self.channels_updating:
+					self.channels_updating.append(channel)
+					self.updateAccess(channel)
 				continue
 			# check if was kicked, rejoin if so
 			if wasKicked.match(buffer):
@@ -230,6 +231,10 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 		
 		message = "flags " + channel
 		self.comm.messageUser(message, self.chanserv)
+		
+		# request again in an hour
+		t = threading.Timer(60*60, self.updateAccess, args=(channel,))
+		t.start()
 	
 	def add_cmd(self, command, function):
 		'''This adds the given command and runs function when a users says !command
