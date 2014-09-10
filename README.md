@@ -6,7 +6,7 @@
 This library can be used to setup a bot to automate tasks on an IRC server.  It was primarily designed to join a channel(s) and accept commands via the channel's messages.
 This library currently does not implement SSL.  I plan to implement that soon. 
 
-##Instalation
+##Installation
 
 Known to work with Python 2.7.6 or later.
 
