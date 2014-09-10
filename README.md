@@ -16,9 +16,9 @@ Run ``python setup.py install``
 
 Basic implementation:
 ```python
-  from ircbot import bot
-  
-  # initialize
+	from ircbot import bot
+	
+	# initialize
 	mybot = bot.Bot('chat.freenode.net', 6665, 'IamBot10110', 'IamBot10110', 'PASSWORD1234', 'Name', 'Host', 'chat.freenode.net')
 	
 	# connect
@@ -36,10 +36,10 @@ Your function needs to take 5 parameters:  func(self, sender, channel, cmd, para
 
 To add a command:
 ```python
-  def slap(self, sender, channel, cmd, params):
-  	message = 'slaps ' + (params.split(' ')[0] or sender) + " around a bit with a large trout"
-  	self.comm.perform_action(message, channel)
-  mybot.add_cmd('slap',slap)	
+	def slap(self, sender, channel, cmd, params):
+		message = 'slaps ' + (params.split(' ')[0] or sender) + " around a bit with a large trout"
+		self.comm.perform_action(message, channel)
+	mybot.add_cmd('slap',slap)
 ```
 
 
