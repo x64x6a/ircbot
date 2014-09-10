@@ -4,7 +4,7 @@
 ##IRC Bot Python Library
 
 This library can be used to setup a bot to automate tasks on an IRC server.  It was primarily designed to join a channel(s) and accept commands via the channel's messages.
-This library currently does not implement SSL.  I plan to implement that soon. 
+This library, by default, uses SSL.
 
 ##Installation
 
@@ -19,7 +19,7 @@ Basic implementation:
 	from ircbot import bot
 	
 	# initialize
-	mybot = bot.Bot('chat.freenode.net', 6665, 'IamBot10110', 'IamBot10110', 'PASSWORD1234', 'Name', 'Host', 'chat.freenode.net')
+	mybot = bot.Bot('chat.freenode.net', 6697, 'IamBot10110', 'IamBot10110', 'PASSWORD1234', 'Name', 'Host', 'chat.freenode.net', sslOn=True)
 	
 	# connect
 	mybot.conn()
