@@ -3,11 +3,11 @@
 
 ##IRC Bot Python Library
 
-This library can be used to setup a bot to automate tasks on an IRC server. It was primarily designed to join a channel and accept commands via the channel's messages. This library uses SSL by default.
+This is an IRC library for Python that abstracts away the lower level details of interacting with an IRC server. You can use this library to automate IRC tasks or create a bot. This library uses SSL by default.
 
 ##Prerequisites
 
-Known to work with Python 2.7.6 or later.
+This library should work with with Python 2.7.6 or later.
 
 ##Installation
 
