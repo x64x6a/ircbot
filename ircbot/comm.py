@@ -42,6 +42,7 @@ def conn((server, port), sslOn=True):
 def login(nickname, username, password, realname, hostname, servername):
 	'''Send login data'''
 	sock.send_data("USER %s %s %s %s" % (username, hostname, servername, realname))
+	# send optional password
 	if password:
 		sock.send_data("PASS %s" % password, 1)
 	sock.send_data("NICK " + nickname)

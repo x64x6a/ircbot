@@ -1,5 +1,5 @@
 '''
-This handles socket communcation for irccomm
+This handles socket communcation for comm.py
 '''
 import socket
 import ssl

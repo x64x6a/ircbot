@@ -1,17 +1,16 @@
 '''
-This can be used primarily to start and setup an IRC bot.  It can be used as is, but the
-bot will not have much functionality.  It will simply join a server of your choice with
-the given user credentials.  You must be registered on the IRC server, so the password 
-field is required.  If you want to add commands that your IRC bot will read, you can add
-them the the bot.Bot.add_cmd() function.  You may also want to take a look at comm.py
+bot.py can be used to automate IRC tasks or create a bot.  It can be used as is, but with
+limited functionality.  It will simply join a server of your choice with the given credentials.
+If you want to add commands that your IRC bot will interpret, you can add them by using the 
+bot.Bot.add_cmd() function.  You may also want to take a look at comm.py.
 
-By default, commands are read in from channel messages.  For example, someone saying 
+By default, commands are read in from all channel messages.  For example, someone saying 
 '!slap Nick' in a channel that the bot is in would proc the 'slap' command, and the bot
 would respond by slapping Nick around a bit with a large trout.
 
 Things to note:
 	 - This bot was setup specifically for Freenode IRC
-	 - A lot of threads are going to spawn :)
+	 - A few threads are going to spawn
 	 - Your nick must be registered to use
 
 To use add_cmd(), your function should take parameters like so:
@@ -23,7 +22,7 @@ Example:
 		message = 'slaps ' + (params.split(' ')[0] or sender) + " around a bit with a large trout"
 		self.comm.perform_action(message, channel)
 	
-	bot = ircbot.bot('chat.freenode.net', 6697, 'Nick', 'Nick', 'password1234', 'Nicolas', 'Host', 'chat.freenode.net')
+	bot = ircbot.bot('chat.freenode.net', 6697, 'NickBot', 'password1234')
 	bot.add_cmd('slap', slap)
 	bot.conn()
 	bot.join('#channel')
@@ -35,19 +34,46 @@ import re
 import time
 
 class Bot():
-	def __init__(self, server, port, nickname, username, password, realname, hostname, servername, logs=False, cmdIdentifier='!', sslOn=True):
-		'''Initialize:  server, port, nickname, username, password, realname, hostname, servername
-Password can be None.  Set the logs flag to true to save logs.  SSL is on by default.'''
+	def __init__(self, server, port, username, password=None, hostname="Host", servername='', realname='', nickname='', cmdIdentifier='!', sslOn=True, logs=False):
+		'''Initializes:  server, port, username
+If you are registered with the username, set the password parameter.
+Other parameters:
+					nickname		default is given username
+					hostname		default is "Host"
+					realname		default is given username
+					servername		default is given server
+					cmdIdentifier	default is '!'
+					sslOn			default is True
+					logs			default is False, set to True if you want
+									logs saved in 'nickname_logs/'
+					'''
 		self.server = server
 		self.port = port
-		self.nickname = nickname
 		self.username = username
 		self.password = password
-		self.realname = realname
-		self.hostname = hostname
-		self.servername = servername
-		self.sslOn = sslOn
+		
+		### Set all defaults ###
+		self.hostname = hostname  # default is "Host"
+		self.sslOn = sslOn  # default is True
 		self.cmdIdentifier = cmdIdentifier  # default identifier is '!'
+		
+		# set nick to username if not set
+		if not nickname:
+			self.nickname = username
+		else:
+			self.nickname = nickname
+		
+		# set servername to server if not set
+		if not servername:
+			self.servername = server
+		else:
+			self.servername = servername
+		
+		# set realname to username if not set
+		if not realname:
+			self.realname = username
+		else:
+			self.realname = realname
 		
 		self.commands = {}
 		import comm
