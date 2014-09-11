@@ -18,8 +18,8 @@ Here is a basic implementation of the library:
 from ircbot import bot
 
 # Initialize the bot
-# (The syntax is: server, port, username, password [optional])
-mybot = bot.Bot('chat.freenode.net', 6697, 'ChatBot', 'password123')
+# (The syntax is: server, port, username)
+mybot = bot.Bot('chat.freenode.net', 6697, 'ChatBot') # You can specify extra arguments to set things like password, real name, etc.
 
 # Connect
 mybot.conn()
