@@ -3,14 +3,15 @@
 
 ##IRC Bot Python Library
 
-This library can be used to setup a bot to automate tasks on an IRC server.  It was primarily designed to join a channel(s) and accept commands via the channel's messages.
-This library, by default, uses SSL.
+This library can be used to setup a bot to automate tasks on an IRC server. It was primarily designed to join a channel and accept commands via the channel's messages. This library uses SSL by default.
 
-##Installation
+##Prerequisites
 
 Known to work with Python 2.7.6 or later.
 
-Run ``python setup.py install``
+##Installation
+
+Run ``python setup.py install``.
 
 ##Example
 
@@ -31,7 +32,7 @@ mybot.join('#channel')
 mybot.comm.messageChannel('This is a Test!','#channel')
 ```
 
-Syntax to add a command involves creation your own function to run when that command is sent.
+Syntax to add a command involves creating your own function to run when that command is sent.
 Your function needs to take 5 parameters:  func(self, sender, channel, cmd, params)
 
 To add a command:
