@@ -1,5 +1,4 @@
 #ircbot
-======
 
 This is an IRC library for Python that abstracts away the lower level details of interacting with an IRC server. You can use this library to automate IRC tasks or create a bot. This library uses SSL by default.
 
