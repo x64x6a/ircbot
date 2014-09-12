@@ -75,6 +75,9 @@ Other parameters:
 		else:
 			self.realname = realname
 		
+		# queue of past commands (100)
+		self.chat_queue = []
+		
 		self.commands = {}
 		import comm
 		self.comm = comm #__import__('comm')
@@ -209,13 +212,18 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 				sender = buffer.split(' ')[1]
 				self.comm.pong(sender)
 				continue
+			
+			# save message into queue
+			self.chat_queue.append(buffer)
+			if len(self.chat_queue.buffer) > 100:
+				self.chat_queue = self.chat_queue[1:]
+			
 			# check if command message from channel
 			if isCmd.match(buffer):
 				t = threading.Thread(target=self.handleCmd, args=(buffer,))
 				t.start()
-				continue
 			# check if joining a channel
-			if isBotJoin.match(buffer):
+			elif isBotJoin.match(buffer):
 				channel = buffer.split(' ')[2]
 				if channel in self.channel_list:
 					continue
@@ -223,16 +231,14 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 				if channel not in self.channels_updating:
 					self.channels_updating.append(channel)
 					self.updateAccess(channel)
-				continue
 			# check if was kicked, rejoin if so
-			if wasKicked.match(buffer):
+			elif wasKicked.match(buffer):
 				channel = buffer.split(' ')[2]
 				if channel in self.channel_list:
 					self.channel_list.remove(channel)
 				self.comm.join(channel)
-				continue
 			# catch chanserv notices
-			if isChanServNotice.match(buffer):
+			elif isChanServNotice.match(buffer):
 				# just hope no other chanserv notices distrupt this...
 				messageList = buffer.split(' ')[3:]
 				message = ' '.join(messageList)[1:]
@@ -244,7 +250,6 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 				if messageList[0][1:].lower() == 'end':
 					t = threading.Thread(target=self.handleAccessList, args=(cs_noticeList,))
 					t.start()
-				continue
 	# end handler
 	
 	def updateAccess(self, channel):

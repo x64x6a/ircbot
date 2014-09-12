@@ -105,6 +105,61 @@ Channel can be a channel or a user'''
 	messageChannel(message, channel)
 
 
+###################################
+#          Other Commands         #
+###################################
+
+def admin(servers=''):
+	sock.send_data("ADMIN %s" % servers)
+
+def away(message=''):
+	sock.send_data("AWAY %s" % message)
+
+def die():
+	sock.send_data("DIE")
+
+def encap(source, destination, subcommand, parameters):
+	sock.send_data(":%s ENCAP %s %s %s" % (source, destination, subcommand, parameters))
+
+def error(message):
+	sock.send_data("ERROR %s" % message)
+
+def help():
+	sock.send_data("HELP")
+
+def info(target=''):
+	sock.send_data("INFO %s" % target)
+
+def ison(nicknames):
+	sock.send_data("ISON %s" % nicknames)
+
+def kill(client, comment):
+	sock.send_data("KILL %s %s" % (client, comment))
+
+def knock(channel, message=''):
+	sock.send_data("KNOCK %s %s" % (channel, message))
+
+def links(remoteServer='', serverMask=''):
+	if not remoteServer:
+		sock.send_data("LINKS")
+	else:
+		sock.send_data("LINKS %s %s", remoteServer, serverMask)
+
+def list(channels='', server=''):
+	if not channels:
+		sock.send_data("LIST")
+	else:
+		sock.send_data("LIST %s %s" % (channels, server))
+
+def lusers(mask='', server=''):
+	if not mask:
+		sock.send_data("LUSERS")
+	else:
+		sock.send_data("LUSERS %s %s" % (mask, server))
+
+
+
+
 ######################################################################
 #                                                                    #
 #          IRC (Recv) Protocol                                       #
