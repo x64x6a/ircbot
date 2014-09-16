@@ -32,6 +32,7 @@ Example:
 import threading
 import re
 import time
+import os
 
 class Bot():
 	def __init__(self, server, port, username, password=None, hostname="Host", servername='', realname='', nickname='', cmdIdentifier='!', sslOn=True, logs=False):
@@ -194,62 +195,68 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 			f = open(self.logfile,'a+')
 		
 		while True:
-			# get next input
-			buffer = self.comm.recv()
-			if buffer:
-				print ">"+buffer
-			else:
-				continue
-			
-			# disallow joins until identified
-			if not self.canJoin and "You are now identified for \x02" + self.nickname + "\x02" in buffer:
-				self.canJoin = True
-			
-			if f:  f.write(buffer + '\n')
-			
-			# check if ping, to respond with pong
-			if buffer[:5] == 'PING ':
-				sender = buffer.split(' ')[1]
-				self.comm.pong(sender)
-				continue
-			
-			# save message into queue
-			self.chat_queue.append(buffer)
-			if len(self.chat_queue.buffer) > 100:
-				self.chat_queue = self.chat_queue[1:]
-			
-			# check if command message from channel
-			if isCmd.match(buffer):
-				t = threading.Thread(target=self.handleCmd, args=(buffer,))
-				t.start()
-			# check if joining a channel
-			elif isBotJoin.match(buffer):
-				channel = buffer.split(' ')[2]
-				if channel in self.channel_list:
+			try:
+				# get next input
+				buffer = self.comm.recv()
+				if buffer:
+					print ">"+buffer
+				else:
 					continue
-				self.channel_list.append(channel)
-				if channel not in self.channels_updating:
-					self.channels_updating.append(channel)
-					self.updateAccess(channel)
-			# check if was kicked, rejoin if so
-			elif wasKicked.match(buffer):
-				channel = buffer.split(' ')[2]
-				if channel in self.channel_list:
-					self.channel_list.remove(channel)
-				self.comm.join(channel)
-			# catch chanserv notices
-			elif isChanServNotice.match(buffer):
-				# just hope no other chanserv notices distrupt this...
-				messageList = buffer.split(' ')[3:]
-				message = ' '.join(messageList)[1:]
 				
-				if messageList[0][1:].lower() == 'entry':
-					cs_noticeList = []
-				cs_noticeList.append(message)
-				# last appended message should contain the channel
-				if messageList[0][1:].lower() == 'end':
-					t = threading.Thread(target=self.handleAccessList, args=(cs_noticeList,))
+				# disallow joins until identified
+				if not self.canJoin and "You are now identified for \x02" + self.nickname + "\x02" in buffer:
+					self.canJoin = True
+				
+				if f:  f.write(buffer + '\n')
+				
+				# check if ping, to respond with pong
+				if buffer[:5] == 'PING ':
+					sender = buffer.split(' ')[1]
+					self.comm.pong(sender)
+					continue
+				
+				# save message into queue
+				self.chat_queue.append(buffer)
+				if len(self.chat_queue.buffer) > 100:
+					self.chat_queue = self.chat_queue[1:]
+				
+				# check if command message from channel
+				if isCmd.match(buffer):
+					t = threading.Thread(target=self.handleCmd, args=(buffer,))
 					t.start()
+				# check if joining a channel
+				elif isBotJoin.match(buffer):
+					channel = buffer.split(' ')[2]
+					if channel in self.channel_list:
+						continue
+					self.channel_list.append(channel)
+					if channel not in self.channels_updating:
+						self.channels_updating.append(channel)
+						self.updateAccess(channel)
+				# check if was kicked, rejoin if so
+				elif wasKicked.match(buffer):
+					channel = buffer.split(' ')[2]
+					if channel in self.channel_list:
+						self.channel_list.remove(channel)
+					self.comm.join(channel)
+				# catch chanserv notices
+				elif isChanServNotice.match(buffer):
+					# just hope no other chanserv notices distrupt this...
+					messageList = buffer.split(' ')[3:]
+					message = ' '.join(messageList)[1:]
+					
+					if messageList[0][1:].lower() == 'entry':
+						cs_noticeList = []
+					cs_noticeList.append(message)
+					# last appended message should contain the channel
+					if messageList[0][1:].lower() == 'end':
+						t = threading.Thread(target=self.handleAccessList, args=(cs_noticeList,))
+						t.start()
+			except Exception,e:
+				# catch all exceptions and exit
+				print "Exception: ",e
+				os._exit(1)
+			
 	# end handler
 	
 	def updateAccess(self, channel):
