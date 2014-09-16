@@ -21,7 +21,7 @@ Example of use:
 	# disconnect from irc
 	comm.disconnect("Off to do the dishes...")
 	
-'''
+''' 
 import ircsocket as sock
 
 
