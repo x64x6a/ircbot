@@ -217,7 +217,7 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 				
 				# save message into queue
 				self.chat_queue.append(buffer)
-				if len(self.chat_queue.buffer) > 100:
+				if len(self.chat_queue) > 100:
 					self.chat_queue = self.chat_queue[1:]
 				
 				# check if command message from channel
