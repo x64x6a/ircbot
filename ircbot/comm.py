@@ -54,7 +54,7 @@ def join(channel):
 def part(channels, message=''):
 	'''Leaves the given channel(s)'''
 	if message:
-		sock.send_data("PART %s %s" % (channels, message)
+		sock.send_data("PART %s %s" % (channels, message))
 	else:
 		sock.send_data("PART %s" % channels)
 
@@ -216,8 +216,8 @@ def rules():
 def server(server, hopcount, info):
 	sock.send_data("SERVER %s %s %s" % (server, hopcount, info))
 
-def service(nickname, reserved, distribution, type, reserved, info):
-	sock.send_data("SERVICE %s %s %s %s %s %s" % (nickname, reserved, distribution, type, reserved, info))
+def service(nickname, reserved1, distribution, type, reserved2, info):
+	sock.send_data("SERVICE %s %s %s %s %s %s" % (nickname, reserved1, distribution, type, reserved2, info))
 
 def servlist(mask='', type=''):
 	if mask:
@@ -239,7 +239,7 @@ def setname(new_real_name):
 
 def silence(hostmask=''):
 	if hostmask:
-		sock.send_data("SILENCE %s" % hostmask):
+		sock.send_data("SILENCE %s" % hostmask)
 	else:
 		sock.send_data("SILENCE")
 
@@ -310,7 +310,7 @@ def who(name='', flag=''):
 
 def whois(nicknames, server=''):
 	if server:
-		sock.send_data("WHOIS %s %s" % (server, nicknames)):
+		sock.send_data("WHOIS %s %s" % (server, nicknames))
 	else:
 		sock.send_data("WHOIS %s" % nicknames)
 
