@@ -105,7 +105,7 @@ def cnoticeUser(message, channel, user):
 
 def change_topic(topic, channel):
 	'''Change topic for channel'''
-	sock.send_data("TOPIC %s :" % (channel, topic))
+	sock.send_data("TOPIC %s :%s" % (channel, topic))
 
 def kick_user(user, channel, reason='GTFO'):
 	'''Kick a user from channel with a reason'''
@@ -127,10 +127,16 @@ def perform_action(action, channel):
 ###################################
 
 def admin(servers=''):
-	sock.send_data("ADMIN %s" % servers)
+	if servers:
+		sock.send_data("ADMIN %s" % servers)
+	else:
+		sock.send_data("ADMIN")
 
 def away(message=''):
-	sock.send_data("AWAY %s" % message)
+	if message:
+		sock.send_data("AWAY %s" % message)
+	else:
+		sock.send_data("AWAY")
 
 def die():
 	sock.send_data("DIE")
@@ -145,7 +151,10 @@ def help():
 	sock.send_data("HELP")
 
 def info(target=''):
-	sock.send_data("INFO %s" % target)
+	if target:
+		sock.send_data("INFO %s" % target)
+	else:
+		sock.send_data("INFO")
 
 def ison(nicknames):
 	sock.send_data("ISON %s" % nicknames)
@@ -154,25 +163,37 @@ def kill(client, comment):
 	sock.send_data("KILL %s %s" % (client, comment))
 
 def knock(channel, message=''):
-	sock.send_data("KNOCK %s %s" % (channel, message))
+	if message:
+		sock.send_data("KNOCK %s %s" % (channel, message))
+	else:
+		sock.send_data("KNOCK %s" % channel)
 
 def links(remoteServer='', serverMask=''):
-	if not remoteServer:
-		sock.send_data("LINKS")
+	if remoteServer:
+		if serverMask:
+			sock.send_data("LINKS %s %s" % (remoteServer, serverMask))
+		else:
+			sock.send_data("LINKS %s" % remoteServer)
 	else:
-		sock.send_data("LINKS %s %s", remoteServer, serverMask)
+		sock.send_data("LINKS")
 
 def list(channels='', server=''):
-	if not channels:
-		sock.send_data("LIST")
+	if channels:
+		if server:
+			sock.send_data("LIST %s %s" % (channels, server))
+		else:
+			sock.send_data("LIST %s" % channels)
 	else:
-		sock.send_data("LIST %s %s" % (channels, server))
+		sock.send_data("LIST")
 
 def lusers(mask='', server=''):
-	if not mask:
-		sock.send_data("LUSERS")
+	if mask:
+		if server:
+			sock.send_data("LUSERS %s %s" % (mask, server))
+		else:
+			sock.send_data("LUSERS %s" % mask)
 	else:
-		sock.send_data("LUSERS %s %s" % (mask, server))
+		sock.send_data("LUSERS")
 
 def modeUser(nickname, flags):
 	sock.send_data("MODE %s %s" % (nickname, flags))
@@ -187,7 +208,7 @@ def motd(server=''):
 	if server:
 		sock.send_data("MOTD %s" % server)
 	else:
-		sock.send_data("MOTD" % server)
+		sock.send_data("MOTD")
 
 def names(channels='', server=''):
 	if channels:
@@ -247,7 +268,7 @@ def stats(query, server=''):
 	if server:
 		sock.send_data("STATS %s %s" % (query, server))
 	else:
-		sock.send_data("STATS %S" % query)
+		sock.send_data("STATS %s" % query)
 
 def summon(user, server='', channel=''):
 	if server:
