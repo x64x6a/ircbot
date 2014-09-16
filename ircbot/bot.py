@@ -187,6 +187,7 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 		wasKicked = re.compile(r'\S+ KICK #\S+ ' + self.nickname + r' :.*', re.IGNORECASE)
 		isChanServNotice = re.compile(r':' + self.chanserv + r'!\S+ NOTICE ' + self.nickname + r' :.+', re.IGNORECASE)
 		isBotJoin = re.compile(r':' + self.nickname + r'!\S+ JOIN #\S+', re.IGNORECASE)
+		isError = re.compile(r'ERROR .*', re.IGNORECASE)
 		cs_noticeList = []  # list of notices from chanserv
 		
 		# set f if loggin is on
@@ -252,9 +253,11 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 					if messageList[0][1:].lower() == 'end':
 						t = threading.Thread(target=self.handleAccessList, args=(cs_noticeList,))
 						t.start()
+				elif isError.match(buffer):
+					raise buffer
 			except Exception,e:
 				# catch all exceptions and exit
-				print "Exception: ",e
+				print "Exception in handler: ",e
 				os._exit(1)
 			
 	# end handler

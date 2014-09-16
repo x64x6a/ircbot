@@ -4,6 +4,7 @@ This handles socket communcation for comm.py
 import socket
 import ssl
 import threading
+import os
 
 ######################################################################
 #                                                                    #
@@ -26,8 +27,9 @@ def recv_buffer():
 			for buff in data:
 				if buff:
 					BUFFER.append(buff)
-	except:
-		return
+	except Exception,e:
+		print"Exception in socket:",e
+		os._exit(1)
 
 def getNext():
 	'''Gets the next data in the buffer'''
@@ -41,7 +43,8 @@ def getNext():
 
 def send_data(command, private=0):
 	'''Simple function to send data through the socket'''
-	print "<",command,'\n\n'
+	if not private:
+		print "<",command,'\n\n'
 	IRC.send(command + '\n')
 
 def conn((server, port), sslOn=True):
