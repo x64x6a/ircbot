@@ -51,15 +51,32 @@ def join(channel):
 	'''Join a channel'''
 	sock.send_data("JOIN %s" % channel)
 
-def pong(sender):
-	'''For a reply to ping, reply with pong as per RFC 1459'''
-	sock.send_data("PONG :%s" % sender)
+def part(channels, message=''):
+	'''Leaves the given channel(s)'''
+	if message:
+		sock.send_data("PART %s %s" % (channels, message)
+	else:
+		sock.send_data("PART %s" % channels)
 
-def disconnect(message):
-	'''Disconnect with given message'''
+def ping(server, server2=''):
+	'''Send a ping to a server'''
+	if server2:
+		sock.send_data("PING %s %s" % (server, server2))
+	else:
+		sock.send_data("PING %s" % server)
+
+def pong(server):
+	'''For a reply to ping, reply with pong as per RFC 1459'''
+	sock.send_data("PONG :%s" % server)
+
+def disconnect(message=''):
+	'''Quit IRC with given message and disconnect the socket'''
 	sock.send_data('QUIT :%s' % message)
 	sock.disconnect()
 
+def quit(message=''):
+	'''Quit IRC with given message'''
+	sock.send_data('QUIT :%s' % message)
 
 ###################################
 #      Extra Utility Commands     #
@@ -75,7 +92,7 @@ def messageChannel(message, channel):
 
 def cmessageUser(message, user, channel):
 	'''Sends a private message to a user on the channel. Both 
-users must be in that channel. Bypasses flood protection limits'''
+	users must be in that channel. Bypasses flood protection limits'''
 	sock.send_data('CPRIVMSG %s %s :s' % (user, channel, message))
 
 def noticeUser(message, user):
@@ -100,7 +117,7 @@ def invite(user, channel):
 
 def perform_action(action, channel):
 	'''Performs the given action, commonly refered to as the /me command.
-Channel can be a channel or a user'''
+	Channel can be a channel or a user'''
 	message = "\x01ACTION " + action + "\x01"
 	messageChannel(message, channel)
 
@@ -157,6 +174,154 @@ def lusers(mask='', server=''):
 	else:
 		sock.send_data("LUSERS %s %s" % (mask, server))
 
+def modeUser(nickname, flags):
+	sock.send_data("MODE %s %s" % (nickname, flags))
+
+def modeChannel(channel, flags, args=''):
+	if args:
+		sock.send_data("MODE %s %s %s" % (channel, flags, args))
+	else:
+		sock.send_data("MODE %s %s" % (channel, flags))
+
+def motd(server=''):
+	if server:
+		sock.send_data("MOTD %s" % server)
+	else:
+		sock.send_data("MOTD" % server)
+
+def names(channels='', server=''):
+	if channels:
+		if server:
+			sock.send_data("NAMES %s %s" % (channels, server))
+		else:
+			sock.send_data("NAMES %s" % channels)
+	else:
+		sock.send_data("NAMES")
+
+def namesx():
+	sock.send_data("PROTOCTL NAMESX")
+
+def oper(username, password):
+	sock.send_data("OPER %s %s" % (username, password))
+
+def rehash():
+	sock.send_data("REHASH")
+
+def restart():
+	sock.send_data("RESTART")
+
+def rules():
+	sock.send_data("RULES")
+
+def server(server, hopcount, info):
+	sock.send_data("SERVER %s %s %s" % (server, hopcount, info))
+
+def service(nickname, reserved, distribution, type, reserved, info):
+	sock.send_data("SERVICE %s %s %s %s %s %s" % (nickname, reserved, distribution, type, reserved, info))
+
+def servlist(mask='', type=''):
+	if mask:
+		if type:
+			sock.send_data("SERVLIST %s %s" % (mask, type))
+		else:
+			sock.send_data("SERVLIST %s" % (mask))
+	else:
+		sock.send_data("SERVLIST")
+
+def squery(servicename, text):
+	sock.send_data("SQUERY %s %s" + (servicename, text))
+
+def squit(server, comment):
+	sock.send_data("SQUIT %s %s" % (server, comment))
+
+def setname(new_real_name):
+	sock.send_data("SETNAME %s" % new_real_name)
+
+def silence(hostmask=''):
+	if hostmask:
+		sock.send_data("SILENCE %s" % hostmask):
+	else:
+		sock.send_data("SILENCE")
+
+def stats(query, server=''):
+	if server:
+		sock.send_data("STATS %s %s" % (query, server))
+	else:
+		sock.send_data("STATS %S" % query)
+
+def summon(user, server='', channel=''):
+	if server:
+		if channel:
+			sock.send_data("SUMMON %s %s %s" % (user, server, channel))
+		else:
+			sock.send_data("SUMMON %s %s" % (user, server))
+	else:
+		sock.send_data("SUMMON %s" % user)
+
+def time(server=''):
+	if server:
+		sock.send_data("TIME %s", server)
+	else:
+		sock.send_data("TIME")
+
+def trace(target=''):
+	if target:
+		sock.send_data("TRACE %s" % target)
+	else:
+		sock.send_data("TRACE")
+
+def uhnames():
+	sock.send_data("PROTOCTL UHNAMES")
+
+def userhost(*nicknames):
+	if nicknames:
+		nickname = ' '.join(nicknames)
+		sock.send_data("USERHOST %s" % nickname)
+
+def userip(nickname):
+	sock.send_data("USERIP %s" % nickname)
+
+def users(server=''):
+	if server:
+		sock.send_data("USERS %s" % server)
+	else:
+		sock.send_data("USERS")
+
+def version(server=''):
+	if server:
+		sock.send_data("VERSION %s" % server)
+	else:
+		sock.send_data("VERSION")
+
+def wallops(message):
+	sock.send_data("WALLOPS %s" % message)
+
+def watch(nicknames):
+	sock.send_data("WATCH %s" % nicknames)
+
+def who(name='', flag=''):
+	if name:
+		if flag == 'o':
+			sock.send_data("WHO %s %s" % (name, flag))
+		else:
+			sock.send_data("WHO %s" % name)
+	else:
+		sock.send_data("WHO")
+
+def whois(nicknames, server=''):
+	if server:
+		sock.send_data("WHOIS %s %s" % (server, nicknames)):
+	else:
+		sock.send_data("WHOIS %s" % nicknames)
+
+def whowas(nickname, count='', server=''):
+	if count:
+		if server:
+			sock.send_data("WHOWAS %s %s %s" % (nickname, count, server))
+		else:
+			sock.send_data("WHOWAS %s %s" % (nickname, count))
+	else:
+		sock.send_data("WHOWAS %s" % nickname)
 
 
 
