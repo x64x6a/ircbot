@@ -84,11 +84,27 @@ def quit(message=''):
 
 def messageUser(message, user):
 	'''Message a given user'''
-	sock.send_data('PRIVMSG %s :%s' % (user, message))
+	s = 'PRIVMSG %s :%s' % (user, message)
+	while len(s) > 510:  # if the message is too long, split up message
+		s = 'PRIVMSG %s :' % user 
+		s += message[:510-len(s)]  # add first part of message so sending exactly 510
+		message = message[510-len(s):]  # set next message to use
+		sock.send_data(s)
+		# set send message to check for next or to send if its short enough
+		s = 'PRIVMSG %s :%s' % (user, message)
+	sock.send_data(s)
 
 def messageChannel(message, channel):
 	'''Message a given channel'''
-	sock.send_data('PRIVMSG %s :%s' %  (channel, message))
+	s = 'PRIVMSG %s :%s' %  (channel, message)
+	while len(s) > 510:  # if the message is too long, split up message
+		s = 'PRIVMSG %s :' % user 
+		s += message[:510-len(s)]  # add first part of message so sending exactly 510
+		message = message[510-len(s):]  # set next message to use
+		sock.send_data(s)
+		# set send message to check for next or to send if its short enough
+		s = 'PRIVMSG %s :%s' % (user, message)
+	sock.send_data(s)
 
 def cmessageUser(message, user, channel):
 	'''Sends a private message to a user on the channel. Both 
