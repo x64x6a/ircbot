@@ -85,13 +85,13 @@ Other parameters:
 		self.channel_list = []
 		self.chanserv = 'ChanServ'  # for accessing channel permissions
 		self.accessLists = {}  # for obtaining channel access lists
+		self.namesList = {}  # for updating whos in the channel
 		self.logs = logs
 		self.log_dir = self.nickname + '_logs'
 		self.logfile = self.log_dir + '/ircbotlog.txt'
 		self.canJoin = False
 		self.lastUpdate = 0
 		self.channels_updating = []   # list of channels that are updating access lists
-		
 		# if logs is turn on, confirm directory exists
 		if self.logs and not os.path.exists(self.log_dir):
 			os.mkdir(self.log_dir)
@@ -188,6 +188,8 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 		isChanServNotice = re.compile(r':' + self.chanserv + r'!\S+ NOTICE ' + self.nickname + r' :.+', re.IGNORECASE)
 		isBotJoin = re.compile(r':' + self.nickname + r'!\S+ JOIN #\S+', re.IGNORECASE)
 		isError = re.compile(r'ERROR .*', re.IGNORECASE)
+		isNamesList = re.compile(r'\S+ \d+ \S+ * #\S+ :.*')
+		
 		cs_noticeList = []  # list of notices from chanserv
 		
 		# set f if loggin is on
@@ -253,6 +255,10 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 					if messageList[0][1:].lower() == 'end':
 						t = threading.Thread(target=self.handleAccessList, args=(cs_noticeList,))
 						t.start()
+				elif isNamesList.match(buffer):
+					# get the names
+					t = threading.Thread(target=self.updateNames, args=(buffer,))
+					t.start()
 				elif isError.match(buffer):
 					raise buffer
 			except Exception,e:
@@ -261,6 +267,15 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 				os._exit(1)
 			
 	# end handler
+	
+	def updateNames(self buffer):
+		'''This function is used to update the bot's lists of who is in a channel'''
+		names = (''.join(buffer.split(' ')[5:]))[1:].split(' ')
+		channel = buffer.split(' ')[4]
+		for i in range(len(names)):
+			if names[i][0] == '+' or names[i][0] == '@':
+				names[i] = names[i][1:]
+		self.namesList[channel] = names
 	
 	def updateAccess(self, channel):
 		'''This function is used to update the bot's channel access lists for a given channel'''
