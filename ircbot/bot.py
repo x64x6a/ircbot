@@ -280,7 +280,7 @@ class Bot():
 					# update who's in the channel
 					t = threading.Thread(target=self.updateNames, args=(channel,))
 					t.start()
-				elif isPart.math(buffer):
+				elif isPart.match(buffer):
 					channel = buffer.split(' ')[2]
 					# update who's in the channel
 					t = threading.Thread(target=self.updateNames, args=(channel,))
