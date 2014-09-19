@@ -37,17 +37,17 @@ import os
 class Bot():
 	def __init__(self, server, port, username, password=None, hostname="Host", servername='', realname='', nickname='', cmdIdentifier='!', sslOn=True, logs=False):
 		'''Initializes:  server, port, username
-If you are registered with the username, set the password parameter.
-Other parameters:
-					nickname		default is given username
-					hostname		default is "Host"
-					realname		default is given username
-					servername		default is given server
-					cmdIdentifier	default is '!'
-					sslOn			default is True
-					logs			default is False, set to True if you want
-									logs saved in 'nickname_logs/'
-					'''
+		If you are registered with the username, set the password parameter.
+		Other parameters:
+							nickname		default is given username
+							hostname		default is "Host"
+							realname		default is given username
+							servername		default is given server
+							cmdIdentifier	default is '!'
+							sslOn			default is True
+							logs			default is False, set to True if you want
+											logs saved in 'nickname_logs/'
+		'''
 		self.server = server
 		self.port = port
 		self.username = username
@@ -143,9 +143,18 @@ Other parameters:
 		func(self, sender, channel, cmd, params) # call function
 	# end handleCmd
 	
+	def handleNames(self buffer):
+		'''This function is used to handle a channel's current names and update the bot's lists of who is in a channel'''
+		names = (''.join(buffer.split(' ')[5:]))[1:].split(' ')
+		channel = buffer.split(' ')[4]
+		for i in range(len(names)):
+			if names[i][0] == '+' or names[i][0] == '@':
+				names[i] = names[i][1:]
+		self.namesList[channel] = names
+	
 	def handleAccessList(self, messageList):
 		''' Attempts to handle notice's from chanserve contain the users' flags.  May fail.
-If it doesn't... it will add the access list to self.flag_dict[channel]'''
+		If it doesn't... it will add the access list to self.flag_dict[channel]'''
 		messages = '\n'.join(messageList)
 		pattern = r"\d+\s+[A-Za-z0-9_]+\s+\+[A-Za-z]+"
 		found = re.findall(pattern, messages)
@@ -187,6 +196,8 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 		wasKicked = re.compile(r'\S+ KICK #\S+ ' + self.nickname + r' :.*', re.IGNORECASE)
 		isChanServNotice = re.compile(r':' + self.chanserv + r'!\S+ NOTICE ' + self.nickname + r' :.+', re.IGNORECASE)
 		isBotJoin = re.compile(r':' + self.nickname + r'!\S+ JOIN #\S+', re.IGNORECASE)
+		isJoin = re.compile(r':\S+!\S+ JOIN #\S+', re.IGNORECASE)
+		isPart = re.compile(r':\S+!\S+ PART #\S+', re.IGNORECASE)
 		isError = re.compile(r'ERROR .*', re.IGNORECASE)
 		isNamesList = re.compile(r'\S+ \d+ \S+ * #\S+ :.*')
 		
@@ -230,6 +241,11 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 				# check if joining a channel
 				elif isBotJoin.match(buffer):
 					channel = buffer.split(' ')[2]
+					
+					# update who's in the channel
+					t = threading.Thread(target=self.updateNames, args=(channel,))
+					t.start()
+					
 					if channel in self.channel_list:
 						continue
 					self.channel_list.append(channel)
@@ -257,7 +273,17 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 						t.start()
 				elif isNamesList.match(buffer):
 					# get the names
-					t = threading.Thread(target=self.updateNames, args=(buffer,))
+					t = threading.Thread(target=self.handleNames, args=(buffer,))
+					t.start()
+				elif isJoin.match(buffer):
+					channel = buffer.split(' ')[2]
+					# update who's in the channel
+					t = threading.Thread(target=self.updateNames, args=(channel,))
+					t.start()
+				elif isPart.math(buffer):
+					channel = buffer.split(' ')[2]
+					# update who's in the channel
+					t = threading.Thread(target=self.updateNames, args=(channel,))
 					t.start()
 				elif isError.match(buffer):
 					raise buffer
@@ -268,17 +294,12 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 			
 	# end handler
 	
-	def updateNames(self buffer):
-		'''This function is used to update the bot's lists of who is in a channel'''
-		names = (''.join(buffer.split(' ')[5:]))[1:].split(' ')
-		channel = buffer.split(' ')[4]
-		for i in range(len(names)):
-			if names[i][0] == '+' or names[i][0] == '@':
-				names[i] = names[i][1:]
-		self.namesList[channel] = names
+	def updateNames(self, channel):
+		'''This function is used to send a request to update the bot's list of who is in a channel'''
+		self.comm.names(channel)
 	
 	def updateAccess(self, channel):
-		'''This function is used to update the bot's channel access lists for a given channel'''
+		'''This function is used to update the bot's channel access lists for a given channel every hour.'''
 		thisUpdate = int(time.time())
 		
 		# wait at least 10 minutes before requesting another update
@@ -294,8 +315,8 @@ If it doesn't... it will add the access list to self.flag_dict[channel]'''
 	
 	def add_cmd(self, command, function):
 		'''This adds the given command and runs function when a users says !command
-The function should take parameters like:
-		func(self, sender, channel, cmd, params)'''
+		The function should take parameters like:
+				func(self, sender, channel, cmd, params)'''
 		self.commands[command] = function
 
 

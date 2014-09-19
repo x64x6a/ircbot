@@ -107,8 +107,7 @@ def messageChannel(message, channel):
 	sock.send_data(s)
 
 def cmessageUser(message, user, channel):
-	'''Sends a private message to a user on the channel. Both 
-	users must be in that channel. Bypasses flood protection limits'''
+	'''Sends a private message to a user on the channel. Both users must be in that channel. Bypasses flood protection limits'''
 	sock.send_data('CPRIVMSG %s %s :s' % (user, channel, message))
 
 def noticeUser(message, user):
@@ -132,10 +131,19 @@ def invite(user, channel):
 	sock.send_data("INVITE %s %s" % (user, channel))
 
 def perform_action(action, channel):
-	'''Performs the given action, commonly refered to as the /me command.
-	Channel can be a channel or a user'''
+	'''Performs the given action, commonly refered to as the /me command.  Channel can be a channel or a user'''
 	message = "\x01ACTION " + action + "\x01"
 	messageChannel(message, channel)
+
+def names(channels='', server=''):
+	'''This sends a request to the server, so that it sends who is in a particular channel'''
+	if channels:
+		if server:
+			sock.send_data("NAMES %s %s" % (channels, server))
+		else:
+			sock.send_data("NAMES %s" % channels)
+	else:
+		sock.send_data("NAMES")
 
 
 ###################################
@@ -225,15 +233,6 @@ def motd(server=''):
 		sock.send_data("MOTD %s" % server)
 	else:
 		sock.send_data("MOTD")
-
-def names(channels='', server=''):
-	if channels:
-		if server:
-			sock.send_data("NAMES %s %s" % (channels, server))
-		else:
-			sock.send_data("NAMES %s" % channels)
-	else:
-		sock.send_data("NAMES")
 
 def namesx():
 	sock.send_data("PROTOCTL NAMESX")
