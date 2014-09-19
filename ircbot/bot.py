@@ -148,6 +148,8 @@ class Bot():
 		names = (''.join(buffer.split(' ')[5:]))[1:].split(' ')
 		channel = buffer.split(' ')[4]
 		for i in range(len(names)):
+			if names[i] == '':
+				continue
 			if names[i][0] == '+' or names[i][0] == '@':
 				names[i] = names[i][1:]
 		self.namesList[channel] = names
