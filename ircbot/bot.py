@@ -143,7 +143,7 @@ class Bot():
 		func(self, sender, channel, cmd, params) # call function
 	# end handleCmd
 	
-	def handleNames(self buffer):
+	def handleNames(self, buffer):
 		'''This function is used to handle a channel's current names and update the bot's lists of who is in a channel'''
 		names = (''.join(buffer.split(' ')[5:]))[1:].split(' ')
 		channel = buffer.split(' ')[4]
