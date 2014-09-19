@@ -150,7 +150,7 @@ class Bot():
 		for i in range(len(names)):
 			if names[i] == '':
 				continue
-			if names[i][0] == '+' or names[i][0] == '@':
+			if names[i][0] == '+':# or names[i][0] == '@':
 				names[i] = names[i][1:]
 		self.namesList[channel] = names
 	
@@ -227,7 +227,7 @@ class Bot():
 				
 				# check if ping, to respond with pong
 				if buffer[:5] == 'PING ':
-					sender = buffer.split(' ')[1]
+					sender = buffer.split(' ')[1][1:]
 					self.comm.pong(sender)
 					continue
 				
