@@ -147,7 +147,7 @@ class Bot():
 		'''This function is used to handle a channel's current names and update the bot's lists of who is in a channel'''
 		names = (''.join(buffer.split(' ')[5:]))[1:].split(' ')
 		channel = buffer.split(' ')[4]
-		print names
+		print "Names!!~~~",names
 		for i in range(len(names)):
 			if names[i] == '':
 				continue
@@ -245,11 +245,10 @@ class Bot():
 				elif isBotJoin.match(buffer):
 					channel = buffer.split(' ')[2]
 					
-					# update who's in the channel
-					t = threading.Thread(target=self.updateNames, args=(channel,))
-					t.start()
-					
 					if channel in self.channel_list:
+						# update who's in the channel
+						t = threading.Thread(target=self.updateNames, args=(channel,))
+						t.start()
 						continue
 					self.channel_list.append(channel)
 					if channel not in self.channels_updating:
