@@ -24,6 +24,7 @@ Example of use:
 ''' 
 import ircsocket as sock
 from time import sleep
+MAX_MSG_LEN = 400
 
 ######################################################################
 #                                                                    #
@@ -85,11 +86,11 @@ def quit(message=''):
 def messageUser(message, user):
 	'''Message a given user'''
 	s = 'PRIVMSG %s :%s' % (user, message)
-	while len(s) > 510:  # if the message is too long, split up message
+	while len(s) > MAX_MSG_LEN:  # if the message is too long, split up message
 		s = 'PRIVMSG %s :' % user 
 		len_s = len(s)
-		s += message[:510-len_s]  # add first part of message so sending exactly 510
-		message = message[510-len_s:]  # set next message to use
+		s += message[:MAX_MSG_LEN-len_s]  # add first part of message so sending exactly 510
+		message = message[MAX_MSG_LEN-len_s:]  # set next message to use
 		sock.send_data(s)
 		# set send message to check for next or to send if its short enough
 		s = 'PRIVMSG %s :%s' % (user, message)
@@ -99,11 +100,11 @@ def messageUser(message, user):
 def messageChannel(message, channel):
 	'''Message a given channel'''
 	s = 'PRIVMSG %s :%s' %  (channel, message)
-	while len(s) > 510:  # if the message is too long, split up message
+	while len(s) > MAX_MSG_LEN:  # if the message is too long, split up message
 		s = 'PRIVMSG %s :' % channel
 		len_s = len(s)
-		s += message[:510-len_s]  # add first part of message so sending exactly 510
-		message = message[510-len_s:]  # set next message to use
+		s += message[:MAX_MSG_LEN-len_s]  # add first part of message so sending exactly 510
+		message = message[MAX_MSG_LEN-len_s:]  # set next message to use
 		sock.send_data(s)
 		# set send message to check for next or to send if its short enough
 		s = 'PRIVMSG %s :%s' % (channel, message)
