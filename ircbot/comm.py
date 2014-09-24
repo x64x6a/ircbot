@@ -376,6 +376,10 @@ def whowas(nickname, count='', server=''):
 
 def recv():
 	'''Get the next data from the IRC server'''
-	buff = sock.getNext().replace('\r','').replace('\n','')
+	buff = sock.getNext()
+	# trying to fix if receive less than expected minimum
+	if len(buff) < 20:
+		buff += sock.getNext()
+	buff = buff.replace('\r','').replace('\n','')
 	return buff
 
