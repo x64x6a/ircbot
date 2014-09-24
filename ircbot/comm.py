@@ -103,7 +103,7 @@ def messageChannel(message, channel):
 		message = message[510-len(s):]  # set next message to use
 		sock.send_data(s)
 		# set send message to check for next or to send if its short enough
-		s = 'PRIVMSG %s :%s' % (user, message)
+		s = 'PRIVMSG %s :%s' % (channel, message)
 	sock.send_data(s)
 
 def cmessageUser(message, user, channel):
