@@ -39,7 +39,7 @@ def recv_buffer():
 							RECV_BUFFER = [RECV_BUFFER[-1] + buff]
 					else:
 						RECV_BUFFER.append(buff)
-			time.sleep(.1)
+			time.sleep(.001)
 	except Exception,e:
 		print >>sys.stderr,"Exception in receive socket:",e
 		os._exit(1)
@@ -53,7 +53,7 @@ def send_buffer():
 				message = SEND_BUFFER[0]
 				SEND_BUFFER = SEND_BUFFER[1:]
 				IRC.send(message)
-			time.sleep(.1)
+			time.sleep(.001)
 	except Exception,e:
 		print >>sys.stderr,"Exception in send socket:",e
 		os._exit(1)

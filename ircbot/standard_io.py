@@ -16,7 +16,7 @@ def print_stdout_buffer():
 				out = STDOUT_BUFFER[0]
 				STDOUT_BUFFER = STDOUT_BUFFER[1:]
 				print >>sys.stdout, out
-			time.sleep(.1)
+			time.sleep(.001)
 	except Exception,e:
 		print >>sys.stderr,"Error in printing to stdout:",e
 		os._exit(1)
