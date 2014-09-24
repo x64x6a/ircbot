@@ -21,6 +21,7 @@ def recv_data():
 
 def recv_buffer():
 	'''Continously gets the next input, and adds into buffer queue'''
+	global RECV_BUFFER
 	try:
 		while 1:
 			data = recv_data()
