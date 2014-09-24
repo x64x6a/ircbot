@@ -202,7 +202,7 @@ class Bot():
 		isJoin = re.compile(r':\S+!\S+ JOIN #\S+', re.IGNORECASE)
 		isPart = re.compile(r':\S+!\S+ PART #\S+', re.IGNORECASE)
 		isError = re.compile(r'ERROR .*', re.IGNORECASE)
-		isNamesList = re.compile(r'\S+ \d+ \S+ * #\S+ :.*')
+		isNamesList = re.compile(r'\S+ \d+ \S+ \* #\S+ :.*')
 		
 		cs_noticeList = []  # list of notices from chanserv
 		
