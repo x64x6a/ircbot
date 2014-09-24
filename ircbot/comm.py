@@ -23,7 +23,7 @@ Example of use:
 	
 ''' 
 import ircsocket as sock
-import time
+from time import sleep
 
 ######################################################################
 #                                                                    #
@@ -93,7 +93,7 @@ def messageUser(message, user):
 		sock.send_data(s)
 		# set send message to check for next or to send if its short enough
 		s = 'PRIVMSG %s :%s' % (user, message)
-		time.sleep(.5) # prevent spam
+		sleep(.5) # prevent spam
 	sock.send_data(s)
 
 def messageChannel(message, channel):
@@ -107,7 +107,7 @@ def messageChannel(message, channel):
 		sock.send_data(s)
 		# set send message to check for next or to send if its short enough
 		s = 'PRIVMSG %s :%s' % (channel, message)
-		time.sleep(.5) # prevent spam
+		sleep(.5) # prevent spam
 	sock.send_data(s)
 
 def cmessageUser(message, user, channel):
