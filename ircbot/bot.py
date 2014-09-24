@@ -147,7 +147,7 @@ class Bot():
 		'''This function is used to handle a channel's current names and update the bot's lists of who is in a channel'''
 		names = (''.join(buffer.split(' ')[5:]))[1:].split(' ')
 		channel = buffer.split(' ')[4]
-		print names
+		print "========== Found Names:",names
 		for i in range(len(names)):
 			if names[i] == '':
 				continue

@@ -12,7 +12,8 @@ import os
 #                                                                    #
 ######################################################################
 IRC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-BUFFER = []
+RECV_BUFFER = []
+SEND_BUFFER = []
 
 def recv_data():
 	'''Receives data'''
@@ -26,17 +27,30 @@ def recv_buffer():
 			data = data.split('\n')
 			for buff in data:
 				if buff:
-					BUFFER.append(buff)
+					RECV_BUFFER.append(buff)
 	except Exception,e:
-		print"Exception in socket:",e
+		print"Exception in receive socket:",e
+		os._exit(1)
+
+def send_buffer():
+	'''Continously attempts to send the next output from a buffer'''
+	global SEND_BUFFER
+	try:
+		while 1:
+			if SEND_BUFFER:
+				message = SEND_BUFFER[0]
+				SEND_BUFFER = SEND_BUFFER[1:]
+				IRC.send(message)
+	except Exception,e:
+		print"Exception in send socket:",e
 		os._exit(1)
 
 def getNext():
 	'''Gets the next data in the buffer'''
-	global BUFFER
-	if BUFFER:
-		buffer = BUFFER[0]
-		BUFFER = BUFFER[1:]
+	global RECV_BUFFER
+	if RECV_BUFFER:
+		buffer = RECV_BUFFER[0]
+		RECV_BUFFER = RECV_BUFFER[1:]
 		return buffer
 	else:
 		return ''
@@ -45,7 +59,7 @@ def send_data(command, private=0):
 	'''Simple function to send data through the socket'''
 	if not private:
 		print "<",command,'\n\n'
-	IRC.send(command + '\n')
+	SEND_BUFFER.append(command + '\n')
 
 def conn((server, port), sslOn=True):
 	'''Open a connection with the server.  SSL is on by default.'''
@@ -58,9 +72,12 @@ def conn((server, port), sslOn=True):
 	# spawn thread to continously get data
 	t = threading.Thread(target=recv_buffer)
 	t.start()
+	
+	# spawn thread to continously send data
+	t = threading.Thread(target=send_buffer)
+	t.start()
 
 def disconnect():
 	'''Disconnects the socket'''
 	IRC.shutdown(socket.SHUT_WR)
 	IRC.close()
-
