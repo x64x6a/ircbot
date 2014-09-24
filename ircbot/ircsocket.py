@@ -27,7 +27,10 @@ def recv_buffer():
 			data = data.split('\n')
 			for buff in data:
 				if buff:
-					RECV_BUFFER.append(buff)
+					if len(RECV_BUFFER[-1]) < 20:
+						RECV_BUFFER = RECV_BUFFER[:-1] + [RECV_BUFFER[-1] + buff]
+					else:
+						RECV_BUFFER.append(buff)
 	except Exception,e:
 		print"Exception in receive socket:",e
 		os._exit(1)
