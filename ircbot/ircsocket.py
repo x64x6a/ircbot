@@ -72,7 +72,7 @@ def send_data(command, private=0):
 	'''Simple function to send data through the socket'''
 	if not private:
 		#print "<",command,'\n\n'
-		stdout_print("<"+command+'\n\n')
+		io.stdout_print("<"+command+'\n\n')
 	SEND_BUFFER.append(command + '\n')
 
 def conn((server, port), sslOn=True):
