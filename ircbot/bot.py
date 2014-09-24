@@ -92,6 +92,7 @@ class Bot():
 		self.canJoin = False
 		self.lastUpdate = 0
 		self.channels_updating = []   # list of channels that are updating access lists
+		self.io = None
 		# if logs is turn on, confirm directory exists
 		if self.logs and not os.path.exists(self.log_dir):
 			os.mkdir(self.log_dir)
@@ -101,6 +102,7 @@ class Bot():
 		'''Connect to IRC server, logs in, and starts the message handler'''
 		self.comm.conn((self.server, self.port), self.sslOn)
 		self.comm.login(self.nickname, self.username, self.password, self.realname, self.hostname, self.servername)
+		self.io = self.comm.io 
 		
 		# start handler
 		t = threading.Thread(target=self.handler)
@@ -147,7 +149,7 @@ class Bot():
 		'''This function is used to handle a channel's current names and update the bot's lists of who is in a channel'''
 		names = (' '.join(buffer.split(' ')[5:]))[1:].split(' ')
 		channel = buffer.split(' ')[4]
-		print "========== Found Names:",names
+		
 		for i in range(len(names)):
 			if names[i] == '':
 				continue
@@ -216,7 +218,8 @@ class Bot():
 				# get next input
 				buffer = self.comm.recv()
 				if buffer:
-					print ">"+buffer
+					#print ">"+buffer
+					self.io.stdout_print(">"+buffer)
 				else:
 					continue
 				
@@ -291,7 +294,7 @@ class Bot():
 					raise buffer
 			except Exception,e:
 				# catch all exceptions and exit
-				print "Exception in handler: ",e
+				print >>sys.stderr,"Exception in handler: ",e
 				os._exit(1)
 			
 	# end handler

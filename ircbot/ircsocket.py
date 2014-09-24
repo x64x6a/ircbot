@@ -5,6 +5,8 @@ import socket
 import ssl
 import threading
 import os
+import sys
+import time
 
 ######################################################################
 #                                                                    #
@@ -37,8 +39,9 @@ def recv_buffer():
 							RECV_BUFFER = [RECV_BUFFER[-1] + buff]
 					else:
 						RECV_BUFFER.append(buff)
+			time.sleep(.1)
 	except Exception,e:
-		print"Exception in receive socket:",e
+		print >>sys.stderr,"Exception in receive socket:",e
 		os._exit(1)
 
 def send_buffer():
@@ -50,8 +53,9 @@ def send_buffer():
 				message = SEND_BUFFER[0]
 				SEND_BUFFER = SEND_BUFFER[1:]
 				IRC.send(message)
+			time.sleep(.1)
 	except Exception,e:
-		print"Exception in send socket:",e
+		print >>sys.stderr,"Exception in send socket:",e
 		os._exit(1)
 
 def getNext():
@@ -67,7 +71,8 @@ def getNext():
 def send_data(command, private=0):
 	'''Simple function to send data through the socket'''
 	if not private:
-		print "<",command,'\n\n'
+		#print "<",command,'\n\n'
+		stdout_print("<"+command+'\n\n')
 	SEND_BUFFER.append(command + '\n')
 
 def conn((server, port), sslOn=True):
@@ -85,6 +90,12 @@ def conn((server, port), sslOn=True):
 	# spawn thread to continously send data
 	t = threading.Thread(target=send_buffer)
 	t.start()
+	
+	global io
+	import standard_io as io
+	io.start_io()
+	return io
+
 
 def disconnect():
 	'''Disconnects the socket'''

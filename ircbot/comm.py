@@ -25,6 +25,7 @@ Example of use:
 import ircsocket as sock
 from time import sleep
 MAX_MSG_LEN = 400
+io = None
 
 ######################################################################
 #                                                                    #
@@ -38,7 +39,8 @@ MAX_MSG_LEN = 400
 
 def conn((server, port), sslOn=True):
 	'''Connect to irc server at port.  SSL is on by default.'''
-	sock.conn((server, port), sslOn)
+	global io
+	io = sock.conn((server, port), sslOn)
 
 def login(nickname, username, password, realname, hostname, servername):
 	'''Send login data'''
