@@ -34,7 +34,7 @@ def recv_buffer():
 						if len(RECV_BUFFER) > 1:
 							RECV_BUFFER = RECV_BUFFER[:-1] + [RECV_BUFFER[-1] + buff]
 						else:
-							
+							RECV_BUFFER = [RECV_BUFFER[-1] + buff]
 					else:
 						RECV_BUFFER.append(buff)
 	except Exception,e:
