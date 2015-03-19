@@ -2,6 +2,8 @@
 
 This is an IRC library for Python that abstracts away the lower level details of interacting with an IRC server. You can use this library to automate IRC tasks or create a bot. This library uses SSL by default.
 
+This project was created to learn more about IRC and the IRC protocol.  I have found that it can be quite useful for creating an IRC bot or to perform similar tasks.  I have found [twisted](https://pypi.python.org/pypi/Twisted)'s implementation to be more efficient, particularly with networking.  I have found that it lacks features that this project has implemented however.
+
 ##Prerequisites
 
 This library should work with with Python 2.7.6 or later.
