@@ -1,13 +1,14 @@
 #ircbot
 
-This is an IRC library for Python that abstracts away the lower level details of interacting with an IRC server. You can use this library to automate IRC tasks or create a bot. This library uses SSL by default.
+This Python library is designed to communicate with an IRC server using the IRC protocol.  This library may be used to automate IRC problems or other tasks, such as creating a bot.  The library connects using SSL by default.
 
-This project was created to learn more about IRC and the IRC protocol.  However, it may be useful for creating an IRC bot that runs channel commands.
+It should be noted that this project was created to learn more about IRC and the IRC protocol, so it may not be entirely perfect in nature.  However, it may be useful for understanding the IRC protocol or in creating an IRC bot that runs channel commands.
 
 Other Python IRC options :
 * [irc](https://pypi.python.org/pypi/irchttps://pypi.python.org/pypi/irc)
 * [twisted](https://pypi.python.org/pypi/Twisted)
 
+A simple example of using irc python library can be found [here](irc_example.py).  It can be installed with `pip install irc`.
 
 ##Prerequisites
 
